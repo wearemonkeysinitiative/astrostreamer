@@ -1,19 +1,8 @@
-version: "3.9"
-
 services:
   mediamtx:
     image: bluenviron/mediamtx:1
     container_name: mediamtx
     restart: unless-stopped
+    network_mode: host
     environment:
-      MTX_RTSPTRANSPORTS: tcp
       MTX_WEBRTCADDITIONALHOSTS: 192.168.1.70
-    ports:
-      # RTSP
-      - "8554:8554"
-      # HTTP / HLS
-      - "8888:8888"
-      # WebRTC signaling (HTTP)
-      - "8889:8889"
-      # WebRTC ICE (UDP)
-      - "8189:8189/udp"
