@@ -9,8 +9,21 @@ services:
       MTX_RTSPTRANSPORTS: tcp
       MTX_WEBRTCADDITIONALHOSTS: 192.168.1.70
     ports:
+      # RTSP сервер (основной видеопоток)
+      # URL: rtsp://<host>:8554/<stream>
       - "8554:8554"
+
+      # HTTP сервер MediaMTX:
+      # - Web UI (панель управления)
+      # - HLS (HTTP Live Streaming)
+      # URL Web UI: http://<host>:8888/
+      # URL HLS: http://<host>:8888/<stream>/index.m3u8
       - "8888:8888"
+
+      # WebRTC сигнальный сервер (WebSocket)
+      # Используется браузером для установления WebRTC соединения
+      # URL: http://<host>:8889/
       - "8889:8889"
-      - "8890:8890/udp"
-      - "8189:8189/udp"
+
+      # WebRTC медиа‑порт (UDP)
+      # Через него идут
