@@ -1,17 +1,19 @@
 export type AppMode = 'chill' | 'astro'
 
-function getAutoMode(): AppMode {
+function getAutoMode(offset: number): AppMode {
   const now = new Date()
-  // Yaroslavl is UTC+3
   const utcHours = now.getUTCHours()
-  const yaroslavlHour = (utcHours + 3) % 24
-  // Astro mode: 22:00 — 06:00 Yaroslavl time
-  return (yaroslavlHour >= 22 || yaroslavlHour < 6) ? 'astro' : 'chill'
+  const localHour = (utcHours + offset) % 24
+  // Astro mode: 22:00 — 06:00 local time
+  return (localHour >= 22 || localHour < 6) ? 'astro' : 'chill'
 }
 
 export function useMode() {
+  const config = useRuntimeConfig()
+  const offset = Number(config.public.timezoneOffset) || 3
+
   const manualOverride = useState<AppMode | null>('mode-override', () => null)
-  const autoMode = useState<AppMode>('mode-auto', () => getAutoMode())
+  const autoMode = useState<AppMode>('mode-auto', () => getAutoMode(offset))
 
   const mode = computed<AppMode>(() => manualOverride.value ?? autoMode.value)
 
@@ -21,7 +23,7 @@ export function useMode() {
 
   function resetToAuto() {
     manualOverride.value = null
-    autoMode.value = getAutoMode()
+    autoMode.value = getAutoMode(offset)
   }
 
   const isManual = computed(() => manualOverride.value !== null)

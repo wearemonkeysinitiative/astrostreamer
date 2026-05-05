@@ -1,5 +1,5 @@
 export default defineEventHandler(async () => {
-  const { weatherApiKey } = useRuntimeConfig()
+  const { weatherApiKey, weatherLat, weatherLon } = useRuntimeConfig()
 
   if (!weatherApiKey) {
     throw createError({ statusCode: 500, statusMessage: 'WEATHER_API_KEY not configured' })
@@ -11,8 +11,8 @@ export default defineEventHandler(async () => {
       'https://api.openweathermap.org/data/2.5/weather',
       {
         query: {
-          lat: 57.6261,
-          lon: 39.8845,
+          lat: weatherLat,
+          lon: weatherLon,
           appid: weatherApiKey,
           units: 'metric',
           lang: 'ru'

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const config = useRuntimeConfig()
 const { data: weather, status, error, refresh } = useWeather()
 
 const weatherIconMap: Record<string, string> = {
@@ -28,7 +29,7 @@ function getWeatherIcon(iconCode: string): string {
 </script>
 
 <template>
-  <UCard title="Ярославль">
+  <UCard :title="config.public.locationName || 'Погода'">
     <div v-if="status === 'pending'" class="flex flex-col gap-3">
       <USkeleton class="h-10 w-24" />
       <USkeleton class="h-4 w-32" />
