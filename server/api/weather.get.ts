@@ -5,18 +5,27 @@ export default defineEventHandler(async () => {
     throw createError({ statusCode: 500, statusMessage: 'WEATHER_API_KEY not configured' })
   }
 
-  const data = await $fetch<Record<string, any>>(
-    'https://api.openweathermap.org/data/2.5/weather',
-    {
-      query: {
-        lat: 57.6261,
-        lon: 39.8845,
-        appid: weatherApiKey,
-        units: 'metric',
-        lang: 'ru'
+  let data: Record<string, any>
+  try {
+    data = await $fetch<Record<string, any>>(
+      'https://api.openweathermap.org/data/2.5/weather',
+      {
+        query: {
+          lat: 57.6261,
+          lon: 39.8845,
+          appid: weatherApiKey,
+          units: 'metric',
+          lang: 'ru'
+        }
       }
+    )
+  } catch (err: any) {
+    const status = err?.response?.status || err?.statusCode || 500
+    if (status === 401) {
+      throw createError({ statusCode: 401, statusMessage: 'OpenWeatherMap: неверный или ещё не активированный API-ключ' })
     }
-  )
+    throw createError({ statusCode: status, statusMessage: `OpenWeatherMap error: ${err.message || status}` })
+  }
 
   return {
     temp: Math.round(data.main.temp),

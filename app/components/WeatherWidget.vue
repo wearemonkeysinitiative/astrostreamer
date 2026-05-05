@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { data: weather, status } = useWeather()
+const { data: weather, status, error, refresh } = useWeather()
 
 const weatherIconMap: Record<string, string> = {
   '01d': 'i-lucide-sun',
@@ -67,8 +67,9 @@ function getWeatherIcon(iconCode: string): string {
       </div>
     </div>
 
-    <div v-else class="text-sm text-neutral-500">
-      Не удалось загрузить погоду
+    <div v-else class="flex flex-col gap-2 text-sm text-neutral-500">
+      <span>{{ error?.statusCode === 401 ? 'API-ключ не активирован (ждите до 2ч после создания)' : 'Не удалось загрузить погоду' }}</span>
+      <UButton variant="soft" size="xs" icon="i-lucide-refresh-cw" label="Повторить" @click="refresh()" />
     </div>
   </UCard>
 </template>
