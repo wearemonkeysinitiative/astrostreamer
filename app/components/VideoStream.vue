@@ -44,11 +44,26 @@ async function connect() {
     const offer = await peerConnection.createOffer()
     await peerConnection.setLocalDescription(offer)
 
+    // Wait for ICE gathering to complete
+    if (peerConnection.iceGatheringState !== 'complete') {
+      await new Promise<void>((resolve) => {
+        const check = () => {
+          if (peerConnection.iceGatheringState === 'complete') {
+            peerConnection.removeEventListener('icegatheringstatechange', check)
+            resolve()
+          }
+        }
+        peerConnection.addEventListener('icegatheringstatechange', check)
+        // Fallback timeout
+        setTimeout(resolve, 3000)
+      })
+    }
+
     const whepUrl = `${config.public.webrtcUrl}/${props.streamPath}/whep`
     const response = await fetch(whepUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/sdp' },
-      body: peerConnection.localDescription!.sdp
+      body: peerConnection.localDescription?.sdp
     })
 
     if (!response.ok) {
@@ -60,7 +75,8 @@ async function connect() {
       type: 'answer',
       sdp: answerSdp
     })
-  } catch {
+  } catch (err) {
+    console.error('[VideoStream] Connection failed:', err)
     status.value = 'error'
     scheduleReconnect()
   }
