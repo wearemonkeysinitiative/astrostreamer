@@ -2,6 +2,8 @@
 definePageMeta({
   layout: 'default'
 })
+
+const { mode } = useMode()
 </script>
 
 <template>
@@ -10,8 +12,15 @@ definePageMeta({
       <VideoStream />
 
       <div class="flex flex-col gap-4">
-        <WeatherWidget />
-        <CameraPresets />
+        <template v-if="mode === 'chill'">
+          <WeatherWidget />
+          <CameraPresets mode="chill" />
+        </template>
+
+        <template v-else>
+          <CameraControlPanel />
+          <CameraPresets mode="astro" />
+        </template>
       </div>
     </div>
   </div>

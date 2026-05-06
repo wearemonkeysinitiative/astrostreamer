@@ -1,4 +1,10 @@
 <script setup lang="ts">
+const props = withDefaults(defineProps<{
+  mode?: 'chill' | 'astro'
+}>(), {
+  mode: 'chill'
+})
+
 const { setConfig } = useCamera()
 
 interface Preset {
@@ -7,7 +13,7 @@ interface Preset {
   params: Record<string, string>
 }
 
-const presets: Preset[] = [
+const chillPresets: Preset[] = [
   {
     name: 'Дневной',
     icon: 'i-lucide-sun',
@@ -24,6 +30,31 @@ const presets: Preset[] = [
     params: { iso: '800', shutterspeed: '1/60', whitebalance: 'Shade' }
   }
 ]
+
+const astroPresets: Preset[] = [
+  {
+    name: 'Млечный путь',
+    icon: 'i-lucide-sparkles',
+    params: { autoexposuremode: 'Manual', iso: '1600', shutterspeed: '20', whitebalance: 'Daylight' }
+  },
+  {
+    name: 'Луна',
+    icon: 'i-lucide-moon',
+    params: { autoexposuremode: 'Manual', iso: '100', shutterspeed: '1/125', whitebalance: 'Tungsten' }
+  },
+  {
+    name: 'Звёздные треки',
+    icon: 'i-lucide-orbit',
+    params: { autoexposuremode: 'Manual', iso: '200', shutterspeed: '30', whitebalance: 'Daylight' }
+  },
+  {
+    name: 'Ночной пейзаж',
+    icon: 'i-lucide-mountain',
+    params: { autoexposuremode: 'Manual', iso: '1600', shutterspeed: '15', whitebalance: 'Daylight' }
+  }
+]
+
+const presets = computed(() => props.mode === 'astro' ? astroPresets : chillPresets)
 
 const applying = ref<string | null>(null)
 
