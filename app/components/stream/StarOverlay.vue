@@ -92,7 +92,8 @@ function starRadius(mag: number): number {
       <circle
         v-for="(star, si) in c.stars"
         :key="'star-' + ci + '-' + si"
-        class="const-star"
+        :class="['const-star', star.mag < 2 && 'twinkle']"
+        :style="star.mag < 2 ? { animationDelay: `${((ci * 5 + si) * 0.7) % 3.6}s` } : undefined"
         :cx="star.x"
         :cy="star.y"
         :r="starRadius(star.mag)"

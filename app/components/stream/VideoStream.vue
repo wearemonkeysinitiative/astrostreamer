@@ -61,7 +61,7 @@ async function connect() {
       })
     }
 
-    const whepUrl = `${config.public.webrtcUrl}/${props.streamPath}/whep`
+    const whepUrl = `/api/whep/${props.streamPath}/whep`
     const response = await fetch(whepUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/sdp' },
@@ -109,7 +109,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div
-    class="relative w-full min-h-[460px] overflow-hidden rounded-lg"
+    class="relative w-full min-h-[300px] lg:min-h-[460px] overflow-hidden rounded-lg"
     :class="props.mode === 'astro' ? 'sky-bright' : 'sky'"
     :style="{ border: '1px solid var(--line)' }"
   >

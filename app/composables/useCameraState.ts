@@ -31,6 +31,13 @@ export interface CameraState {
   wb: string
 }
 
+export interface CameraInfo {
+  model: string
+  lens: string
+  resolution: string
+  fps: number
+}
+
 export function useCameraState() {
   const state = useState<CameraState>('camera-state', () => ({
     iso: '400',
@@ -40,7 +47,46 @@ export function useCameraState() {
     wb: 'DAYLIGHT'
   }))
 
-  const { setConfig } = useCamera()
+  const cameraInfo = useState<CameraInfo>('camera-info', () => ({
+    model: 'EOS 600D',
+    lens: 'Гелиос 44МС 58mm',
+    resolution: '1920×1080',
+    fps: 30
+  }))
+
+  const { setConfig, getConfig, getStatus } = useCamera()
+
+  async function initFromServer() {
+    try {
+      const status = await getStatus() as Record<string, unknown>
+      if (status.model) cameraInfo.value.model = String(status.model)
+      if (status.lens) cameraInfo.value.lens = String(status.lens)
+      if (status.resolution) cameraInfo.value.resolution = String(status.resolution)
+      if (status.fps) cameraInfo.value.fps = Number(status.fps)
+    } catch {
+      // keep defaults
+    }
+
+    // Sync current camera config
+    const keys = ['iso', 'shutterspeed', 'whitebalance'] as const
+    const fieldMap: Record<string, keyof CameraState> = {
+      iso: 'iso',
+      shutterspeed: 'shutter',
+      whitebalance: 'wb'
+    }
+    for (const key of keys) {
+      try {
+        const result = await getConfig(key) as Record<string, unknown>
+        const val = result.value ?? result.current
+        if (val !== undefined) {
+          const field = fieldMap[key]
+          state.value = { ...state.value, [field]: String(val) }
+        }
+      } catch {
+        // keep defaults
+      }
+    }
+  }
 
   async function setCamPatch(patch: Partial<CameraState>) {
     // Optimistic update
@@ -67,5 +113,5 @@ export function useCameraState() {
     setCamPatch({ [field]: options[next] })
   }
 
-  return { state, setCamPatch, step }
+  return { state, cameraInfo, setCamPatch, step, initFromServer }
 }

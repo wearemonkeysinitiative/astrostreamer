@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
   <div
-    class="absolute bottom-14 right-3 z-[5] rounded-lg px-3 py-2 backdrop-blur-sm font-mono text-[11px]"
+    class="absolute bottom-12 right-2 lg:bottom-14 lg:right-3 z-[5] rounded-lg px-2 py-1.5 lg:px-3 lg:py-2 backdrop-blur-sm font-mono text-[10px] lg:text-[11px]"
     :style="{
       background: 'rgba(0,0,0,0.55)',
       border: active ? '1px solid color-mix(in srgb, var(--accent-3) 40%, transparent)' : '1px solid transparent'

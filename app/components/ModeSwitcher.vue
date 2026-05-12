@@ -17,19 +17,19 @@ const modes: { value: AppMode; label: string; hint: string; color: string }[] = 
 </script>
 
 <template>
-  <div class="flex items-center gap-1 rounded-lg p-1" :style="{ background: 'var(--bg-2)' }">
+  <div class="flex items-center gap-0.5 sm:gap-1 rounded-lg p-0.5 sm:p-1" :style="{ background: 'var(--bg-2)' }">
     <button
       v-for="m in modes"
       :key="m.value"
-      class="relative flex flex-col items-center px-4 py-1.5 rounded-md transition-colors"
+      class="relative flex flex-col items-center px-2 sm:px-4 py-1 sm:py-1.5 rounded-md transition-colors"
       :style="{
         background: modelValue === m.value ? 'var(--bg-3)' : 'transparent',
         color: modelValue === m.value ? 'var(--ink-0)' : 'var(--ink-3)'
       }"
       @click="emit('update:modelValue', m.value)"
     >
-      <span class="font-mono text-[11px] font-semibold tracking-wider">{{ m.label }}</span>
-      <span class="font-mono text-[9px]" style="color: var(--ink-3)">{{ m.hint }}</span>
+      <span class="font-mono text-[10px] sm:text-[11px] font-semibold tracking-wider">{{ m.label }}</span>
+      <span class="hidden md:block font-mono text-[9px]" style="color: var(--ink-3)">{{ m.hint }}</span>
       <!-- Active underline -->
       <span
         v-if="modelValue === m.value"

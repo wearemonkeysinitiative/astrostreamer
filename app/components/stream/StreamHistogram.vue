@@ -34,10 +34,10 @@ const barWidth = 100 / BARS
 
 <template>
   <div
-    class="absolute bottom-14 left-3 z-[5] rounded-lg px-2 py-1.5 backdrop-blur-sm"
+    class="absolute bottom-12 left-2 lg:bottom-14 lg:left-3 z-[5] rounded-lg px-2 py-1.5 backdrop-blur-sm"
     style="background: rgba(0,0,0,0.55)"
   >
-    <svg :viewBox="`0 0 100 ${svgHeight}`" class="w-[120px] h-[40px]" preserveAspectRatio="none">
+    <svg :viewBox="`0 0 100 ${svgHeight}`" class="w-[100px] h-[32px] lg:w-[120px] lg:h-[40px]" preserveAspectRatio="none">
       <rect
         v-for="(h, i) in bars"
         :key="i"

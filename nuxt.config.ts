@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     cameraServiceUrl: process.env.CAMERA_SERVICE_URL || 'http://127.0.0.1:3001',
     internalApiKey: process.env.INTERNAL_API_KEY || '',
     public: {
+      appVersion: process.env.npm_package_version || '0.4',
       cameraApi: process.env.CAMERA_API_URL,
       webrtcUrl: process.env.MEDIAMTX_WEBRTC_URL,
       locationName: process.env.LOCATION_NAME,

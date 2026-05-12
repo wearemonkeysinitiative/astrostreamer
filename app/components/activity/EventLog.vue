@@ -87,7 +87,7 @@ onUnmounted(() => {
       </div>
       <span class="font-mono text-[10px]" style="color: var(--ink-3)">
         <template v-if="telemetry">
-          CPU {{ telemetry.cpuTemp > 0 ? `${telemetry.cpuTemp}°C` : `${telemetry.cpuLoad}%` }}
+          CPU {{ telemetry.cpuTemp > 0 ? `${telemetry.cpuTemp}°C · ${telemetry.cpuLoad}%` : `${telemetry.cpuLoad}%` }}
         </template>
         <template v-else>
           CPU —

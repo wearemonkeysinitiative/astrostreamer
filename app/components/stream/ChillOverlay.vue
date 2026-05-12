@@ -14,7 +14,7 @@ const emit = defineEmits<{
 
     <!-- Motto (bottom center) -->
     <div class="absolute bottom-8 inset-x-0 text-center">
-      <p class="font-display text-2xl" style="color: var(--ink-2)">
+      <p class="font-display text-xl lg:text-2xl" style="color: var(--ink-2)">
         you are watching the sky
       </p>
     </div>

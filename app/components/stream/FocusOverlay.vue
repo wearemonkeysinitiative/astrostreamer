@@ -6,7 +6,7 @@ defineProps<{
 
 <template>
   <div
-    class="absolute bottom-3 right-3 z-[5] rounded-lg px-3 py-2 backdrop-blur-sm w-[140px]"
+    class="absolute bottom-2 right-2 lg:bottom-3 lg:right-3 z-[5] rounded-lg px-2 py-1.5 lg:px-3 lg:py-2 backdrop-blur-sm w-[120px] lg:w-[140px]"
     style="background: rgba(0,0,0,0.55)"
   >
     <div class="flex items-center justify-between mb-1.5 font-mono text-[10px]">
