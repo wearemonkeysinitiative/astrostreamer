@@ -1,6 +1,6 @@
-export type AppMode = 'chill' | 'astro'
+export type AppMode = 'chill' | 'manual' | 'astro'
 
-function getAutoMode(offset: number): AppMode {
+function getAutoMode(offset: number): 'chill' | 'astro' {
   const now = new Date()
   const utcHours = now.getUTCHours()
   const localHour = (utcHours + offset) % 24
@@ -13,7 +13,7 @@ export function useMode() {
   const offset = Number(config.public.timezoneOffset) || 3
 
   const manualOverride = useState<AppMode | null>('mode-override', () => null)
-  const autoMode = useState<AppMode>('mode-auto', () => getAutoMode(offset))
+  const autoMode = useState<'chill' | 'astro'>('mode-auto', () => getAutoMode(offset))
 
   const mode = computed<AppMode>(() => manualOverride.value ?? autoMode.value)
 

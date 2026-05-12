@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import type { AppMode } from '~/composables/useMode'
+
 const props = withDefaults(defineProps<{
   streamPath?: string
+  mode?: AppMode
 }>(), {
-  streamPath: 'canon'
+  streamPath: 'canon',
+  mode: 'manual'
 })
 
 const config = useRuntimeConfig()
@@ -44,7 +48,6 @@ async function connect() {
     const offer = await peerConnection.createOffer()
     await peerConnection.setLocalDescription(offer)
 
-    // Wait for ICE gathering to complete
     if (peerConnection.iceGatheringState !== 'complete') {
       await new Promise<void>((resolve) => {
         const check = () => {
@@ -54,7 +57,6 @@ async function connect() {
           }
         }
         peerConnection.addEventListener('icegatheringstatechange', check)
-        // Fallback timeout
         setTimeout(resolve, 3000)
       })
     }
@@ -106,36 +108,42 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <UCard class="overflow-hidden">
-    <div class="relative aspect-video bg-black rounded">
-      <video
-        ref="videoRef"
-        autoplay
-        muted
-        playsinline
-        class="w-full h-full object-contain"
+  <div
+    class="relative w-full min-h-[460px] overflow-hidden rounded-lg"
+    :class="props.mode === 'astro' ? 'sky-bright' : 'sky'"
+    :style="{ border: '1px solid var(--line)' }"
+  >
+    <!-- Grid overlay -->
+    <div class="absolute inset-0 grid-lines pointer-events-none" />
+
+    <!-- Milky Way effect (astro only) -->
+    <div v-if="props.mode === 'astro'" class="milky-way" />
+
+    <!-- Video element -->
+    <video
+      ref="videoRef"
+      autoplay
+      muted
+      playsinline
+      class="relative w-full h-full object-contain z-[1]"
+    />
+
+    <!-- Connection status (when not live) -->
+    <div
+      v-if="status !== 'live'"
+      class="absolute inset-0 flex flex-col items-center justify-center gap-2 z-[2]"
+      style="color: var(--ink-3)"
+    >
+      <UIcon
+        :name="status === 'connecting' ? 'i-lucide-loader-circle' : 'i-lucide-video-off'"
+        :class="['size-8', status === 'connecting' && 'animate-spin']"
       />
-
-      <div
-        v-if="status !== 'live'"
-        class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-neutral-400"
-      >
-        <UIcon
-          :name="status === 'connecting' ? 'i-lucide-loader-circle' : 'i-lucide-video-off'"
-          :class="['size-8', status === 'connecting' && 'animate-spin']"
-        />
-        <span class="text-sm">
-          {{ status === 'connecting' ? 'Подключение к стриму...' : 'Нет соединения. Переподключение...' }}
-        </span>
-      </div>
-
-      <div
-        v-if="status === 'live'"
-        class="absolute top-3 left-3 flex items-center gap-1.5 bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded"
-      >
-        <span class="size-1.5 bg-white rounded-full animate-pulse" />
-        LIVE
-      </div>
+      <span class="text-sm font-mono">
+        {{ status === 'connecting' ? 'Подключение к стриму...' : 'Нет соединения. Переподключение...' }}
+      </span>
     </div>
-  </UCard>
+
+    <!-- Overlay slot -->
+    <slot />
+  </div>
 </template>

@@ -2,7 +2,14 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxt/ui'],
+  modules: ['@nuxt/ui', '@nuxt/fonts'],
+  fonts: {
+    families: [
+      { name: 'IBM Plex Sans', weights: [400, 500, 600, 700] },
+      { name: 'JetBrains Mono', weights: [400, 500, 600, 700] },
+      { name: 'Cormorant Garamond', weights: [500, 600], styles: ['italic'] }
+    ]
+  },
   css: ['~/assets/css/main.css'],
   colorMode: {
     preference: 'dark'

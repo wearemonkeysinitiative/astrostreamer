@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { AppMode } from '~/composables/useMode'
+
 const props = withDefaults(defineProps<{
-  mode?: 'chill' | 'astro'
+  mode?: AppMode
 }>(), {
   mode: 'chill'
 })

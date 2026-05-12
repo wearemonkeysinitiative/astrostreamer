@@ -1,17 +1,8 @@
 <template>
-  <UDashboardGroup>
-    <UDashboardPanel>
-      <template #header>
-        <UDashboardNavbar title="AstroStreamer">
-          <template #right>
-            <ModeSwitch />
-          </template>
-        </UDashboardNavbar>
-      </template>
-
-      <template #body>
-        <slot />
-      </template>
-    </UDashboardPanel>
-  </UDashboardGroup>
+  <div class="min-h-screen flex flex-col" style="background: var(--bg-0)">
+    <AppHeader />
+    <main class="flex-1 flex flex-col">
+      <slot />
+    </main>
+  </div>
 </template>
