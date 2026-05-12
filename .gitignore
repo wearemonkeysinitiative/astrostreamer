@@ -25,3 +25,7 @@ logs
 CLAUDE.md
 PROJECT.MD
 api-examples/*
+
+# Camera service build
+services/camera/dist
+services/camera/node_modules

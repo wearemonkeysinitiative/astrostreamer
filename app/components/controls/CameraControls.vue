@@ -12,12 +12,20 @@ const shutterOptions = computed(() =>
   props.mode === 'astro' ? [...SHUTTER_AST] : [...SHUTTER_MAN]
 )
 
+const { capture } = useCamera()
+
 const capturing = ref(false)
 const detectActive = ref(false)
 
-function onCapture() {
+async function onCapture() {
   capturing.value = true
-  setTimeout(() => { capturing.value = false }, 600)
+  try {
+    await capture()
+  } catch (err) {
+    console.error('Capture failed:', err)
+  } finally {
+    setTimeout(() => { capturing.value = false }, 600)
+  }
 }
 </script>
 

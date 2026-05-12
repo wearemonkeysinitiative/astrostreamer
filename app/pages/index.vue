@@ -5,9 +5,18 @@ definePageMeta({
 
 const { mode, setMode } = useMode()
 const { state } = useCameraState()
+const { connectSSE, disconnectSSE } = useEvents()
 
 const capturing = ref(false)
 const detectActive = ref(false)
+
+onMounted(() => {
+  connectSSE()
+})
+
+onUnmounted(() => {
+  disconnectSSE()
+})
 </script>
 
 <template>

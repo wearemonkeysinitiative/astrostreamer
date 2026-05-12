@@ -18,11 +18,14 @@ export default defineNuxtConfig({
     weatherApiKey: process.env.WEATHER_API_KEY,
     weatherLat: process.env.WEATHER_LAT,
     weatherLon: process.env.WEATHER_LON,
+    cameraServiceUrl: process.env.CAMERA_SERVICE_URL || 'http://127.0.0.1:3001',
+    internalApiKey: process.env.INTERNAL_API_KEY || '',
     public: {
       cameraApi: process.env.CAMERA_API_URL,
       webrtcUrl: process.env.MEDIAMTX_WEBRTC_URL,
       locationName: process.env.LOCATION_NAME,
-      timezoneOffset: process.env.TIMEZONE_OFFSET
+      timezoneOffset: process.env.TIMEZONE_OFFSET,
+      mockCamera: process.env.MOCK_CAMERA === 'true' || process.env.MOCK_CAMERA === '1'
     }
   }
 })

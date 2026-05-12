@@ -7,29 +7,29 @@ const props = withDefaults(defineProps<{
   mode: 'chill'
 })
 
-const { setConfig } = useCamera()
+const { setCamPatch } = useCameraState()
 
 interface Preset {
   name: string
   icon: string
-  params: Record<string, string>
+  params: { iso: string; shutter: string; wb: string }
 }
 
 const chillPresets: Preset[] = [
   {
     name: 'Дневной',
     icon: 'i-lucide-sun',
-    params: { iso: '200', shutterspeed: '1/500', whitebalance: 'Auto' }
+    params: { iso: '200', shutter: '1/500', wb: 'AUTO' }
   },
   {
     name: 'Облачный',
     icon: 'i-lucide-cloud',
-    params: { iso: '400', shutterspeed: '1/250', whitebalance: 'Cloudy' }
+    params: { iso: '400', shutter: '1/250', wb: 'CLOUDY' }
   },
   {
     name: 'Вечерний',
     icon: 'i-lucide-sunset',
-    params: { iso: '800', shutterspeed: '1/60', whitebalance: 'Shade' }
+    params: { iso: '800', shutter: '1/60', wb: 'SHADE' }
   }
 ]
 
@@ -37,22 +37,22 @@ const astroPresets: Preset[] = [
   {
     name: 'Млечный путь',
     icon: 'i-lucide-sparkles',
-    params: { autoexposuremode: 'Manual', iso: '1600', shutterspeed: '20', whitebalance: 'Daylight' }
+    params: { iso: '1600', shutter: '20', wb: 'DAYLIGHT' }
   },
   {
     name: 'Луна',
     icon: 'i-lucide-moon',
-    params: { autoexposuremode: 'Manual', iso: '100', shutterspeed: '1/125', whitebalance: 'Tungsten' }
+    params: { iso: '100', shutter: '1/125', wb: 'TUNGSTEN' }
   },
   {
     name: 'Звёздные треки',
     icon: 'i-lucide-orbit',
-    params: { autoexposuremode: 'Manual', iso: '200', shutterspeed: '30', whitebalance: 'Daylight' }
+    params: { iso: '200', shutter: '30', wb: 'DAYLIGHT' }
   },
   {
     name: 'Ночной пейзаж',
     icon: 'i-lucide-mountain',
-    params: { autoexposuremode: 'Manual', iso: '1600', shutterspeed: '15', whitebalance: 'Daylight' }
+    params: { iso: '1600', shutter: '15', wb: 'DAYLIGHT' }
   }
 ]
 
@@ -63,9 +63,7 @@ const applying = ref<string | null>(null)
 async function applyPreset(preset: Preset) {
   applying.value = preset.name
   try {
-    for (const [key, value] of Object.entries(preset.params)) {
-      await setConfig(key, value)
-    }
+    await setCamPatch(preset.params)
   } finally {
     applying.value = null
   }

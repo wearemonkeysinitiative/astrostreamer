@@ -42,7 +42,7 @@ const SEED_EVENTS: EventEntry[] = [
 ]
 
 export function useEvents() {
-  const events = useState<EventEntry[]>('event-log', () => [...SEED_EVENTS])
+  const events = useState<EventEntry[]>('event-log', () => [])
 
   const filters = useState<Record<EventKind, boolean>>('event-filters', () => ({
     setting: true,
@@ -52,6 +52,8 @@ export function useEvents() {
     error: true,
     telemetry: true
   }))
+
+  const sseConnected = useState<boolean>('sse-connected', () => false)
 
   const filteredEvents = computed(() =>
     events.value.filter(e => filters.value[e.kind])
@@ -68,5 +70,55 @@ export function useEvents() {
     events.value = []
   }
 
-  return { events, filters, filteredEvents, addEvent, clearEvents }
+  let eventSource: EventSource | null = null
+
+  function connectSSE() {
+    if (import.meta.server) return
+    if (eventSource) return
+
+    const config = useRuntimeConfig()
+    const isMock = config.public.mockCamera
+
+    // In mock mode without SSE history, seed initial events
+    if (isMock && events.value.length === 0) {
+      events.value = [...SEED_EVENTS]
+    }
+
+    eventSource = new EventSource('/api/events')
+
+    eventSource.onopen = () => {
+      sseConnected.value = true
+    }
+
+    eventSource.onmessage = (msg) => {
+      try {
+        const data = JSON.parse(msg.data)
+        if (data.type === 'init' && data.events) {
+          // Server history replaces local state (unless mock with seeds)
+          if (data.events.length > 0) {
+            events.value = data.events
+          }
+        } else if (data.type === 'event' && data.event) {
+          events.value.unshift(data.event)
+        }
+      } catch {
+        // Ignore parse errors
+      }
+    }
+
+    eventSource.onerror = () => {
+      sseConnected.value = false
+      // EventSource auto-reconnects
+    }
+  }
+
+  function disconnectSSE() {
+    if (eventSource) {
+      eventSource.close()
+      eventSource = null
+      sseConnected.value = false
+    }
+  }
+
+  return { events, filters, filteredEvents, addEvent, clearEvents, connectSSE, disconnectSSE, sseConnected }
 }

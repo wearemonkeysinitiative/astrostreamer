@@ -15,6 +15,14 @@ export const SHUTTER_AST = [
 
 export const WB_PRESETS = ['AUTO', 'DAYLIGHT', 'SHADE', 'CLOUDY', 'TUNGSTEN', 'FLUOR'] as const
 
+// Map UI field names to gphoto2 config keys
+const FIELD_TO_CONFIG: Record<string, string> = {
+  iso: 'iso',
+  shutter: 'shutterspeed',
+  wb: 'whitebalance',
+  focus: 'focus'
+}
+
 export interface CameraState {
   iso: string
   shutter: string
@@ -32,8 +40,22 @@ export function useCameraState() {
     wb: 'DAYLIGHT'
   }))
 
-  function setCamPatch(patch: Partial<CameraState>) {
+  const { setConfig } = useCamera()
+
+  async function setCamPatch(patch: Partial<CameraState>) {
+    // Optimistic update
     state.value = { ...state.value, ...patch }
+
+    // Send changes to camera service
+    for (const [field, value] of Object.entries(patch)) {
+      const configKey = FIELD_TO_CONFIG[field]
+      if (!configKey) continue
+      try {
+        await setConfig(configKey, String(value))
+      } catch (err) {
+        console.error(`Failed to set ${configKey}=${value}:`, err)
+      }
+    }
   }
 
   function step(field: 'iso' | 'shutter', options: readonly string[], direction: 1 | -1) {

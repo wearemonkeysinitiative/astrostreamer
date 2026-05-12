@@ -1,21 +1,26 @@
 export function useCamera() {
-    const config = useRuntimeConfig()
-    const api = config.public.cameraApi
+  async function setConfig(key: string, value: string) {
+    return await $fetch('/api/camera/config', {
+      method: 'POST',
+      body: { key, value }
+    })
+  }
 
-    async function setConfig(key: string, value: string) {
-        return await $fetch(`${api}/set`, {
-            method: "POST",
-            body: { key, value }
-        });
-    }
+  async function getConfig(key: string) {
+    return await $fetch(`/api/camera/config/${key}`)
+  }
 
-    async function getConfig(key: string) {
-        return await $fetch(`${api}/get?key=${key}`);
-    }
+  async function list() {
+    return await $fetch('/api/camera/config')
+  }
 
-    async function list() {
-        return await $fetch(`${api}/list`);
-    }
+  async function capture() {
+    return await $fetch('/api/capture', { method: 'POST' })
+  }
 
-    return { setConfig, getConfig, list };
+  async function getStatus() {
+    return await $fetch('/api/camera/status')
+  }
+
+  return { setConfig, getConfig, list, capture, getStatus }
 }

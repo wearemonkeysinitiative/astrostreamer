@@ -1,5 +1,22 @@
 <script setup lang="ts">
 const { mode } = useMode()
+
+const cameraStatus = ref<{ connected: boolean; model?: string } | null>(null)
+
+async function fetchStatus() {
+  try {
+    cameraStatus.value = await $fetch('/api/camera/status')
+  } catch {
+    cameraStatus.value = { connected: false }
+  }
+}
+
+onMounted(() => {
+  fetchStatus()
+})
+
+const isConnected = computed(() => cameraStatus.value?.connected ?? false)
+const cameraModel = computed(() => cameraStatus.value?.model || 'Camera')
 </script>
 
 <template>
@@ -31,9 +48,13 @@ const { mode } = useMode()
     <!-- Status (right) -->
     <div class="flex items-center gap-3">
       <div class="flex items-center gap-2 font-mono text-xs" style="color: var(--ink-2)">
-        <span class="size-2 rounded-full" style="background: var(--good)" />
-        <span>orangepi.local</span>
-        <span style="color: var(--ink-3)">· 192.168.0.42</span>
+        <span
+          class="size-2 rounded-full"
+          :style="{ background: isConnected ? 'var(--good)' : 'var(--bad)' }"
+        />
+        <span>{{ cameraModel }}</span>
+        <span v-if="isConnected" style="color: var(--ink-3)">· online</span>
+        <span v-else style="color: var(--bad)">· offline</span>
       </div>
       <button
         class="p-1.5 rounded"

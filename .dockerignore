@@ -1,0 +1,14 @@
+node_modules
+.nuxt
+.output
+.data
+.nitro
+.cache
+dist
+.git
+.idea
+.fleet
+.DS_Store
+*.log
+services/camera/node_modules
+services/camera/dist

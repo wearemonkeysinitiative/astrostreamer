@@ -1,5 +1,26 @@
 <script setup lang="ts">
-const { filteredEvents, filters, clearEvents } = useEvents()
+const { filteredEvents, filters, clearEvents, sseConnected } = useEvents()
+
+const telemetry = ref<{ cpuTemp: number; cpuLoad: number } | null>(null)
+
+let telemetryTimer: ReturnType<typeof setInterval> | undefined
+
+async function fetchTelemetry() {
+  try {
+    telemetry.value = await $fetch('/api/telemetry')
+  } catch {
+    telemetry.value = null
+  }
+}
+
+onMounted(() => {
+  fetchTelemetry()
+  telemetryTimer = setInterval(fetchTelemetry, 10_000)
+})
+
+onUnmounted(() => {
+  if (telemetryTimer) clearInterval(telemetryTimer)
+})
 </script>
 
 <template>
@@ -56,11 +77,21 @@ const { filteredEvents, filters, clearEvents } = useEvents()
       :style="{ borderColor: 'var(--line)' }"
     >
       <div class="flex items-center gap-2 font-mono text-[10px]">
-        <span class="size-1.5 rounded-full" style="background: var(--good)" />
-        <span style="color: var(--ink-3)">192.168.0.42:8080</span>
+        <span
+          class="size-1.5 rounded-full"
+          :style="{ background: sseConnected ? 'var(--good)' : 'var(--bad)' }"
+        />
+        <span style="color: var(--ink-3)">
+          {{ sseConnected ? 'SSE connected' : 'disconnected' }}
+        </span>
       </div>
       <span class="font-mono text-[10px]" style="color: var(--ink-3)">
-        CPU 49.2°C
+        <template v-if="telemetry">
+          CPU {{ telemetry.cpuTemp > 0 ? `${telemetry.cpuTemp}°C` : `${telemetry.cpuLoad}%` }}
+        </template>
+        <template v-else>
+          CPU —
+        </template>
       </span>
     </div>
   </aside>
